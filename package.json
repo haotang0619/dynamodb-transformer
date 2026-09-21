@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-transformer",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Plenty of handy functions that help you deal with DynamoDB schema & expressions easily.",
   "main": "lib/main/index.js",
   "types": "lib/main/index.d.ts",
@@ -8,7 +8,7 @@
   "private": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/HaoTang0619/dynamodb-transformer.git"
+    "url": "https://github.com/haotang0619/dynamodb-transformer.git"
   },
   "author": "Howard Tang <t919901@gmail.com>",
   "keywords": [
@@ -19,7 +19,7 @@
     "attributevalue"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/HaoTang0619/dynamodb-transformer",
+  "homepage": "https://github.com/haotang0619/dynamodb-transformer",
   "engines": {
     "node": ">=10"
   },
