@@ -1,4 +1,3 @@
-/* eslint-disable no-console-log/no-console-log */
 import {
   BatchGetItemCommand,
   DeleteItemCommand,
@@ -27,7 +26,7 @@ const item = {
 };
 
 // BatchGetItem
-async () => {
+export const batchGetItem = async () => {
   const expressions = dataSetToExpressions({
     projection: Object.keys(condition),
   });
@@ -46,7 +45,7 @@ async () => {
 };
 
 // DeleteItem
-async () => {
+export const deleteItem = async () => {
   const result = await dynamoDB.send(
     new DeleteItemCommand({
       TableName,
@@ -58,7 +57,7 @@ async () => {
 };
 
 // GetItem
-async () => {
+export const getItem = async () => {
   const result = await dynamoDB.send(
     new GetItemCommand({ TableName, Key: marshaler(key) }),
   );
@@ -67,7 +66,7 @@ async () => {
 };
 
 // PutItem
-async () => {
+export const putItem = async () => {
   const expressions = dataSetToExpressions({
     condition: { pKey: ATTRIBUTE_NOT_EXISTS() },
   });
@@ -83,7 +82,7 @@ async () => {
 };
 
 // Query
-async () => {
+export const query = async () => {
   const expressions = dataSetToExpressions({
     filter: { disabled: NE(true) },
     keyCondition: key,
@@ -112,7 +111,7 @@ async () => {
 };
 
 // Scan
-async () => {
+export const scan = async () => {
   const expressions = dataSetToExpressions({
     filter: condition,
     projection: Object.keys(condition),
@@ -136,7 +135,7 @@ async () => {
 };
 
 // UpdateItem
-async () => {
+export const updateItem = async () => {
   const delta = { ...item, updated: Math.floor(+new Date() / 1000) };
 
   const expressions = dataSetToExpressions({
