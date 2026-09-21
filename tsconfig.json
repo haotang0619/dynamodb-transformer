@@ -1,11 +1,13 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "moduleResolution": "node",
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
     "target": "es2017",
+    "lib": ["ES2017", "DOM", "ES2019.Symbol"],
     "sourceMap": true,
     "outDir": "./lib/main",
     "skipLibCheck": true,
