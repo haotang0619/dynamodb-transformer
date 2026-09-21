@@ -11,6 +11,10 @@ import {
 const marshalerOfEach = <T extends Unmarshalled>(
   value: T,
 ): MarshalerOfEachResult<T> => {
+  // undefined is filtered out by callers (marshaler / the L branch below);
+  // this just narrows the type for the recursive M-branch call below.
+  if (value === undefined) return undefined as MarshalerOfEachResult<T>;
+
   // B
   if (value instanceof Uint8Array) {
     return { B: value } as MarshalerOfEachResult<T>;
@@ -29,7 +33,7 @@ const marshalerOfEach = <T extends Unmarshalled>(
   // L
   if (Array.isArray(value)) {
     return {
-      L: value.map((v) => marshalerOfEach(v)),
+      L: value.filter((v) => v !== undefined).map((v) => marshalerOfEach(v)),
     } as MarshalerOfEachResult<T>;
   }
 
@@ -64,10 +68,12 @@ const marshalerOfEach = <T extends Unmarshalled>(
 };
 
 const marshaler = <T extends MarshalerParams>(data: T): MarshalerResult<T> => {
-  return Object.entries(data).reduce(
-    (acc, [name, value]) => ({ ...acc, [name]: marshalerOfEach(value) }),
-    {},
-  ) as MarshalerResult<T>;
+  return Object.entries(data).reduce((acc, [name, value]) => {
+    // Skip undefined values instead of crashing on Object.entries(undefined)
+    // once marshalerOfEach falls through to the M branch.
+    if (value === undefined) return acc;
+    return { ...acc, [name]: marshalerOfEach(value) };
+  }, {}) as MarshalerResult<T>;
 };
 
 export default marshaler;

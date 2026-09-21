@@ -18,3 +18,18 @@ test('marshler', () => {
     nameStr: { S: '123' },
   });
 });
+
+test('marshler skips undefined values instead of throwing', () => {
+  expect(
+    marshaler({
+      nameDefined: 'abc',
+      nameUndefined: undefined,
+      nameList: [1, undefined, 2],
+      nameMapping: { child: 'def', childUndefined: undefined },
+    }),
+  ).toStrictEqual<{ [name: string]: Marshalled }>({
+    nameDefined: { S: 'abc' },
+    nameList: { L: [{ N: '1' }, { N: '2' }] },
+    nameMapping: { M: { child: { S: 'def' } } },
+  });
+});

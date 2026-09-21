@@ -46,37 +46,40 @@ export type Unmarshalled =
   | NSet // NS
   | null // NULL
   | string // S
-  | SSet; // SS
+  | SSet // SS
+  | undefined; // skipped by marshaler (key omitted / array element dropped)
 
-export type MarshalerOfEachResult<T extends Unmarshalled> = T extends Uint8Array
-  ? { B: Uint8Array }
-  : T extends boolean
-    ? { BOOL: boolean }
-    : T extends BSet
-      ? { BS: Uint8Array[] }
-      : T extends [Unmarshalled, ...Unmarshalled[]]
-        ? { L: Mapped<T, 'to_marshalled'> }
-        : T extends Unmarshalled[]
-          ? {
-              L: {
-                [P in keyof T]: T[P] extends Unmarshalled
-                  ? MarshalerOfEachResult<T[P]>
-                  : never;
-              };
-            }
-          : T extends { [name: string]: Unmarshalled }
-            ? { M: MarshalerResult<T> }
-            : T extends number
-              ? { N: string }
-              : T extends NSet
-                ? { NS: string[] }
-                : T extends null
-                  ? { NULL: boolean }
-                  : T extends string
-                    ? { S: string }
-                    : T extends SSet
-                      ? { SS: string[] }
-                      : any;
+export type MarshalerOfEachResult<T extends Unmarshalled> = T extends undefined
+  ? never
+  : T extends Uint8Array
+    ? { B: Uint8Array }
+    : T extends boolean
+      ? { BOOL: boolean }
+      : T extends BSet
+        ? { BS: Uint8Array[] }
+        : T extends [Unmarshalled, ...Unmarshalled[]]
+          ? { L: Mapped<T, 'to_marshalled'> }
+          : T extends Unmarshalled[]
+            ? {
+                L: {
+                  [P in keyof T]: T[P] extends Unmarshalled
+                    ? MarshalerOfEachResult<T[P]>
+                    : never;
+                };
+              }
+            : T extends { [name: string]: Unmarshalled }
+              ? { M: MarshalerResult<T> }
+              : T extends number
+                ? { N: string }
+                : T extends NSet
+                  ? { NS: string[] }
+                  : T extends null
+                    ? { NULL: boolean }
+                    : T extends string
+                      ? { S: string }
+                      : T extends SSet
+                        ? { SS: string[] }
+                        : any;
 
 export type MarshalerParams = { [name: string]: Unmarshalled };
 

@@ -8,6 +8,19 @@ import {
   UnmarshalerResult,
 } from './type';
 
+// Number(raw) (unlike parseInt) doesn't truncate decimals, but it can still
+// silently lose precision on integers past Number.MAX_SAFE_INTEGER, so guard
+// that case explicitly instead of returning a corrupted value.
+const parseNumber = (raw: string): number => {
+  const num = Number(raw);
+  if (Number.isInteger(num) && !Number.isSafeInteger(num)) {
+    throw new RangeError(
+      `unmarshaler: number "${raw}" exceeds Number.MAX_SAFE_INTEGER and cannot be represented exactly as a JS number.`,
+    );
+  }
+  return num;
+};
+
 const unmarshalerOfEach = <T extends Marshalled>(
   value: T,
 ): UnmarshalerOfEachResult<T> => {
@@ -38,14 +51,12 @@ const unmarshalerOfEach = <T extends Marshalled>(
 
   // N
   if (value.N !== undefined) {
-    return parseInt(value.N, 10) as UnmarshalerOfEachResult<T>;
+    return parseNumber(value.N) as UnmarshalerOfEachResult<T>;
   }
 
   // NS
   if (value.NS !== undefined) {
-    return new NSet(
-      value.NS.map((v) => parseInt(v, 10)),
-    ) as UnmarshalerOfEachResult<T>;
+    return new NSet(value.NS.map(parseNumber)) as UnmarshalerOfEachResult<T>;
   }
 
   // NULL

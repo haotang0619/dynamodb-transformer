@@ -18,3 +18,15 @@ test('unmarshler', () => {
     nameStr: '123',
   });
 });
+
+test('unmarshler keeps decimal precision instead of truncating', () => {
+  expect(unmarshaler({ nameNum: { N: '12.5' } })).toStrictEqual<Unmarshalled>({
+    nameNum: 12.5,
+  });
+});
+
+test('unmarshler throws on numbers beyond Number.MAX_SAFE_INTEGER', () => {
+  expect(() => unmarshaler({ nameNum: { N: '9007199254740993' } })).toThrow(
+    RangeError,
+  );
+});
