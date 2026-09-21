@@ -34,6 +34,7 @@
     "build:module": "tsc --build tsconfig.module.json",
     "format": "prettier --write \"src/**/*.{ts*,js*}\"",
     "lint": "yarn format && eslint \"src/**/*.{ts*,js*}\" --fix",
+    "lint:check": "prettier --check \"src/**/*.{ts*,js*}\" && eslint \"src/**/*.{ts*,js*}\"",
     "test": "jest --passWithNoTests",
     "publish:local": "yalc publish --push --replace",
     "prepare": "yarn build",

@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Enable Yarn via Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - name: Build
+        run: yarn build
+
+      - name: Test
+        run: yarn test
+
+      - name: Lint (no autofix)
+        run: yarn lint:check
+
+  usage-demo:
+    # Exercises the usage/ demo package end to end (yalc publish -> install
+    # -> ts-node), the exact path that silently broke for years because
+    # nothing ever ran it in CI.
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Enable Yarn via Corepack
+        run: corepack enable
+
+      - name: Install root dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts
+
+      - name: Build and publish to the local yalc store
+        run: |
+          yarn build
+          yarn publish:local
+
+      - name: Link the local package into usage/
+        working-directory: usage
+        run: ../node_modules/.bin/yalc add dynamodb-transformer
+
+      - name: Install usage/ dependencies
+        working-directory: usage
+        run: yarn install --frozen-lockfile
+
+      - name: Run the usage/ demo (type-checks and executes index.ts)
+        working-directory: usage
+        run: yarn use
