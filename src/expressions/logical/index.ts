@@ -5,6 +5,7 @@ import {
   SYMBOL_NOT,
   SYMBOL_OR,
 } from '../type';
+
 import { LogicalParams } from './type';
 
 const logical = (...params: LogicalParams): PlainData => {

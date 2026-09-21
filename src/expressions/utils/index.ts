@@ -1,6 +1,7 @@
 import marshaler from '../../marshaler';
 import RESERVED_WORDS from '../reserved_words';
 import { Expressions } from '../type';
+
 import { AddAttrParams } from './type';
 
 export const addAttr = (...params: AddAttrParams): string => {

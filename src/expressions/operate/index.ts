@@ -1,5 +1,6 @@
 import { Expressions, PlainValues, PlainValuesArr } from '../type';
 import { addAttr, addNameAttr } from '../utils/index';
+
 import { OperateFuncParams, OperateParams, OperateResult } from './type';
 
 const operateFunc = (...params: OperateFuncParams): string => {

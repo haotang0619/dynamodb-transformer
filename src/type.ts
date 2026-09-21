@@ -22,10 +22,10 @@ type Mapped<
 > = Arr extends []
   ? []
   : Arr extends [infer H]
-  ? [...Result, MapParamList<F, H>]
-  : Arr extends [infer Head, ...infer Tail]
-  ? Mapped<[...Tail], F, [...Result, MapParamList<F, Head>]>
-  : Result;
+    ? [...Result, MapParamList<F, H>]
+    : Arr extends [infer Head, ...infer Tail]
+      ? Mapped<[...Tail], F, [...Result, MapParamList<F, Head>]>
+      : Result;
 
 // Utils (Union)
 type UnionKeys<T> = T extends T ? keyof T : never;
@@ -51,32 +51,32 @@ export type Unmarshalled =
 export type MarshalerOfEachResult<T extends Unmarshalled> = T extends Uint8Array
   ? { B: Uint8Array }
   : T extends boolean
-  ? { BOOL: boolean }
-  : T extends BSet
-  ? { BS: Uint8Array[] }
-  : T extends [Unmarshalled, ...Unmarshalled[]]
-  ? { L: Mapped<T, 'to_marshalled'> }
-  : T extends Unmarshalled[]
-  ? {
-      L: {
-        [P in keyof T]: T[P] extends Unmarshalled
-          ? MarshalerOfEachResult<T[P]>
-          : never;
-      };
-    }
-  : T extends { [name: string]: Unmarshalled }
-  ? { M: MarshalerResult<T> }
-  : T extends number
-  ? { N: string }
-  : T extends NSet
-  ? { NS: string[] }
-  : T extends null
-  ? { NULL: boolean }
-  : T extends string
-  ? { S: string }
-  : T extends SSet
-  ? { SS: string[] }
-  : any;
+    ? { BOOL: boolean }
+    : T extends BSet
+      ? { BS: Uint8Array[] }
+      : T extends [Unmarshalled, ...Unmarshalled[]]
+        ? { L: Mapped<T, 'to_marshalled'> }
+        : T extends Unmarshalled[]
+          ? {
+              L: {
+                [P in keyof T]: T[P] extends Unmarshalled
+                  ? MarshalerOfEachResult<T[P]>
+                  : never;
+              };
+            }
+          : T extends { [name: string]: Unmarshalled }
+            ? { M: MarshalerResult<T> }
+            : T extends number
+              ? { N: string }
+              : T extends NSet
+                ? { NS: string[] }
+                : T extends null
+                  ? { NULL: boolean }
+                  : T extends string
+                    ? { S: string }
+                    : T extends SSet
+                      ? { SS: string[] }
+                      : any;
 
 export type MarshalerParams = { [name: string]: Unmarshalled };
 
@@ -103,30 +103,30 @@ export type Marshalled = StrictUnion<
 export type UnmarshalerOfEachResult<T extends Marshalled> = keyof T extends 'B'
   ? Uint8Array
   : keyof T extends 'BOOL'
-  ? boolean
-  : keyof T extends 'BSet'
-  ? BSet
-  : keyof T extends 'L'
-  ? T['L'] extends [Marshalled, ...Marshalled[]]
-    ? Mapped<T['L'], 'to_unmarshalled'>
-    : T['L'] extends Marshalled[]
-    ? Unmarshalled[]
-    : never
-  : keyof T extends 'M'
-  ? T['M'] extends { [name: string]: Marshalled }
-    ? UnmarshalerResult<T['M']>
-    : never
-  : keyof T extends 'N'
-  ? number
-  : keyof T extends 'NS'
-  ? NSet
-  : keyof T extends 'NULL'
-  ? null
-  : keyof T extends 'S'
-  ? string
-  : keyof T extends 'SS'
-  ? SSet
-  : any;
+    ? boolean
+    : keyof T extends 'BSet'
+      ? BSet
+      : keyof T extends 'L'
+        ? T['L'] extends [Marshalled, ...Marshalled[]]
+          ? Mapped<T['L'], 'to_unmarshalled'>
+          : T['L'] extends Marshalled[]
+            ? Unmarshalled[]
+            : never
+        : keyof T extends 'M'
+          ? T['M'] extends { [name: string]: Marshalled }
+            ? UnmarshalerResult<T['M']>
+            : never
+          : keyof T extends 'N'
+            ? number
+            : keyof T extends 'NS'
+              ? NSet
+              : keyof T extends 'NULL'
+                ? null
+                : keyof T extends 'S'
+                  ? string
+                  : keyof T extends 'SS'
+                    ? SSet
+                    : any;
 
 export type UnmarshalerParams = { [name: string]: Marshalled } | undefined;
 
